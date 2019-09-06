@@ -1,10 +1,10 @@
-﻿using Mocker.ContentTypeState;
-using Mocker.Enums;
-using Mocker.Services.Abstracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Mocker.ContentTypeState;
+using Mocker.Enums;
+using Mocker.Services.Abstracts;
 
 namespace Mocker.Services.Concretes
 {
@@ -22,7 +22,8 @@ namespace Mocker.Services.Concretes
                     return listEnum[i];
                 }
             }
-            return ContentTypeEnum.TextPlain;
+            throw new InvalidEnumArgumentException(nameof(contentType), -1, typeof(ContentTypeEnum));
+
 
         }
         public bool Validate(string contentType)
@@ -45,7 +46,7 @@ namespace Mocker.Services.Concretes
 
             return false;
 
-            
+
         }
         public string NormalizeContentType(string contentType)
         {
@@ -60,29 +61,19 @@ namespace Mocker.Services.Concretes
                 case ContentTypeEnum.ApplicationJson:
                     return new ApplicationJsonMockState();
                 case ContentTypeEnum.ApplicationXWWWFormUrlencoded:
-                    break;
                 case ContentTypeEnum.ApplicationXHtmlXml:
-                    break;
                 case ContentTypeEnum.ApplicationXml:
-                    break;
                 case ContentTypeEnum.MultipartFormData:
-                    break;
                 case ContentTypeEnum.TextCss:
-                    break;
                 case ContentTypeEnum.TextCsv:
-                    break;
                 case ContentTypeEnum.TextHtml:
-                    break;
                 case ContentTypeEnum.TextJson:
-                    break;
                 case ContentTypeEnum.TextPlain:
-                    break;
                 case ContentTypeEnum.TextXml:
-                    break;
+                    return new ContentTypeMockState();
                 default:
-                    break;
+                    throw new InvalidEnumArgumentException(nameof(contentType), (int)@enum, typeof(ContentTypeEnum));
             }
-            return null;
         }
     }
 }

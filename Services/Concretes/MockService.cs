@@ -1,11 +1,15 @@
-﻿using Mocker.Enums;
-using Mocker.Models;
-using Mocker.Models.Requests;
-using Mocker.Services.Abstracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Mocker.Enums;
+using Mocker.Models;
+using Mocker.Models.Settings;
+using Mocker.Services.Abstracts;
+using Newtonsoft.Json;
 
 namespace Mocker.Services.Concretes
 {
@@ -13,21 +17,38 @@ namespace Mocker.Services.Concretes
     {
         private readonly IContentTypeService _contentTypeService;
         private readonly IGitHubService _githubService;
+        private readonly GitHubSetting _githubSetting;
+        private readonly string _guidMethodsFolderPath;
 
-        public MockService(IContentTypeService contentTypeService, IGitHubService githubService)
+        public MockService(IContentTypeService contentTypeService, IGitHubService githubService, IOptions<GitHubSetting> githubSetting)
         {
             _contentTypeService = contentTypeService;
             _githubService = githubService;
+            _githubSetting = githubSetting.Value;
+            _guidMethodsFolderPath = Path.Combine(_githubSetting.HttpMethodsFolderPath, "guidmethods");
         }
 
-        public async Task<OperationResult<Guid>> Create(CreateMockRequest request)
+        public async Task<OperationResult<Guid>> Create(params MockModel[] request)
         {
             OperationResult<Guid> operationResult = new OperationResult<Guid>();
             Guid guid = Guid.NewGuid();
-            string content = Newtonsoft.Json.JsonConvert.SerializeObject(request);
-            var taskGuidMethods = _githubService.CreateFile("mocks/httpmethods/guidmethods", guid, "{\"httpmethods\":[ \"GET\" ] }");
-            var taskCreateMock = _githubService.CreateFile("mocks/httpmethods/" + request.HttpMethod, guid, content);
-            Task.WaitAll(taskGuidMethods, taskCreateMock);
+
+            GuidMethodsModel guidMethodsModel = new GuidMethodsModel();
+            guidMethodsModel.HttpMethods = request.Select(x => x.HttpMethod).ToArray();
+
+
+            await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonConvert.SerializeObject(guidMethodsModel));
+
+
+
+            foreach (MockModel mock in request)
+            {
+                string content = JsonConvert.SerializeObject(mock);
+
+                await _githubService.CreateFile(Path.Combine(_githubSetting.HttpMethodsFolderPath, mock.HttpMethod.ToUpper()), guid, content);
+            }
+
+
 
             operationResult.Result = guid;
             operationResult.Success = true;
@@ -35,11 +56,19 @@ namespace Mocker.Services.Concretes
             return operationResult;
         }
 
-        public async Task<OperationResult<CreateMockRequest>> GetMock(Guid guid)
+        public async Task<OperationResult<MockModel>> GetMock(Guid guid, string httpMethod)
         {
-            string content = await _githubService.GetFileContent("mocks/httpmethods/GET", guid);
-            CreateMockRequest mock = Newtonsoft.Json.JsonConvert.DeserializeObject<CreateMockRequest>(content);
-            OperationResult<CreateMockRequest> operationResult = new OperationResult<CreateMockRequest>
+            string jsonGuidMethodsModel = await _githubService.GetFileContent(_guidMethodsFolderPath, guid);
+            GuidMethodsModel guidMethodsModel = JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethodsModel);
+
+            if (!guidMethodsModel.HttpMethods.Contains(httpMethod))
+            {
+                httpMethod = "GET";
+            }
+
+            string content = await _githubService.GetFileContent(Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper()), guid);
+            MockModel mock = JsonConvert.DeserializeObject<MockModel>(content);
+            OperationResult<MockModel> operationResult = new OperationResult<MockModel>
             {
                 Success = true,
                 Result = mock
@@ -47,26 +76,41 @@ namespace Mocker.Services.Concretes
             return operationResult;
         }
 
-        public async Task<ValidateResult> Validate(CreateMockRequest request)
+        public async Task<ValidateResult> Validate(params MockModel[] request)
         {
 
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
-            if (request.StatusCode <= 0)
+
+            if (request.GroupBy(x => x.HttpMethod.ToLower()).Any(x => x.Count() > 1))
             {
-                errorMessages.Add(ErrorMessageCodeEnum.StatusCodeSmallerThanOne);
+                errorMessages.Add(ErrorMessageCodeEnum.HttpMethodDuplicate);
+                return new ValidateResult()
+                {
+                    Success = !errorMessages.Any(),
+                    ErrorMessages = errorMessages.ToArray()
+                };
             }
-            if (!_contentTypeService.Validate(request.ContentType))
+
+            foreach (MockModel mock in request)
             {
-                errorMessages.Add(ErrorMessageCodeEnum.InvalidContentType);
+                if (mock.StatusCode <= 0)
+                {
+                    errorMessages.Add(ErrorMessageCodeEnum.StatusCodeSmallerThanOne);
+                }
+                if (!_contentTypeService.Validate(mock.ContentType))
+                {
+                    errorMessages.Add(ErrorMessageCodeEnum.InvalidContentType);
+                }
+                if (string.IsNullOrWhiteSpace(mock.Charset))
+                {
+                    errorMessages.Add(ErrorMessageCodeEnum.InvalidCharset);
+                }
+                if (string.IsNullOrWhiteSpace(mock.HttpMethod))
+                {
+                    errorMessages.Add(ErrorMessageCodeEnum.invalidMethod);
+                }
             }
-            if (string.IsNullOrWhiteSpace(request.Charset))
-            {
-                errorMessages.Add(ErrorMessageCodeEnum.InvalidCharset);
-            }
-            if (string.IsNullOrWhiteSpace(request.HttpMethod))
-            {
-                errorMessages.Add(ErrorMessageCodeEnum.invalidMethod);
-            }
+
 
             return new ValidateResult()
             {

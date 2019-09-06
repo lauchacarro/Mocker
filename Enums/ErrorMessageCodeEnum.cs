@@ -7,7 +7,8 @@
         InvalidContentType,
         InvalidCharset,
         invalidMethod,
-        ExceptionInCreateFile
+        ExceptionInCreateFile,
+        HttpMethodDuplicate,
 
     }
 }

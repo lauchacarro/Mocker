@@ -1,40 +1,44 @@
-﻿using Microsoft.Extensions.Configuration;
-using Mocker.Services.Abstracts;
-using Octokit;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Mocker.Models.Settings;
+using Mocker.Services.Abstracts;
+using Octokit;
 
 namespace Mocker.Services.Concretes
 {
     public class GitHubService : IGitHubService
     {
-        private readonly IConfiguration _configuration;
         private readonly GitHubClient _client;
+        private readonly GitHubSetting _githubSetting;
 
-        public GitHubService(IConfiguration configuration)
+        public GitHubService(IOptions<GitHubSetting> githubSetting)
         {
-            _configuration = configuration;
-            _client = new GitHubClient(new ProductHeaderValue("Mocker"));
-            var basicAuth = new Credentials(_configuration["GitHub:User"], _configuration["GitHub:Pass"]);
+            _githubSetting = githubSetting.Value;
+            _client = new GitHubClient(new ProductHeaderValue(nameof(Mocker)));
+            Credentials basicAuth = new Credentials(_githubSetting.User, _githubSetting.Pass);
             _client.Credentials = basicAuth;
+            _githubSetting = githubSetting.Value;
         }
 
         public async Task CreateFile(string path, Guid guid, string content)
         {
 
             await _client.Repository.Content.CreateFile(
-                                long.Parse(_configuration["GitHub:RepositoryID"]),
+                                _githubSetting.RepositoryID,
                                 Path.Combine(path, guid.ToString()),
-                                new CreateFileRequest("File creation",
+                                new CreateFileRequest($"Create Mock",
                                                       content,
-                                                      _configuration["GitHub:Branch"]));
+                                                      _githubSetting.Branch));
 
         }
 
         public async Task<string> GetFileContent(string path, Guid guid)
         {
-            var contents = await _client.Repository.Content.GetAllContents(long.Parse(_configuration["GitHub:RepositoryID"]), Path.Combine(path, guid.ToString()));
+            IReadOnlyList<RepositoryContent> contents = await _client.Repository.Content.GetAllContents(_githubSetting.RepositoryID, Path.Combine(path, guid.ToString()));
             return contents[0].Content;
         }
     }

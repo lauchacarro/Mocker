@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Mocker.Models.Requests
+namespace Mocker.Models
 {
-    public class CreateMockRequest
+    public class MockModel
     {
         public string HttpMethod { get; set; }
         public int StatusCode { get; set; }
