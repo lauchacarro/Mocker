@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,13 @@ namespace Mocker.Controllers
         {
             var mock = await _mockService.GetMock(guid, Request.Method);
             IContentTypeMockState state = _contentTypeService.GetState(mock.Result.ContentType);
+            if (mock.Result.Headers != null && mock.Result.Headers.Any())
+            {
+                foreach (KeyValuePair<string, string> header in mock.Result.Headers)
+                {
+                    Response.Headers.Add(header.Key, header.Value);
+                }
+            }
             return state.CreateObjectResult(mock.Result);
         }
 

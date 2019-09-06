@@ -6,7 +6,7 @@ namespace Mocker.ContentTypeState
 {
     public class ContentTypeMockState : IContentTypeMockState
     {
-        public virtual ObjectResult CreateObjectResult(MockModel request)
+        public virtual IActionResult CreateObjectResult(MockModel request)
         {
             ObjectResult objectResult = new ObjectResult(request.Body)
             {
@@ -18,6 +18,8 @@ namespace Mocker.ContentTypeState
                 new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(request.ContentType)
             };
             objectResult.ContentTypes = mediaType;
+
+            
             return objectResult;
         }
     }

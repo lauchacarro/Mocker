@@ -5,6 +5,6 @@ namespace Mocker.ContentTypeState
 {
     public interface IContentTypeMockState
     {
-        ObjectResult CreateObjectResult(MockModel request);
+        IActionResult CreateObjectResult(MockModel request);
     }
 }

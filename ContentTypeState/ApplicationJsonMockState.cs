@@ -6,9 +6,9 @@ namespace Mocker.ContentTypeState
 {
     public class ApplicationJsonMockState : ContentTypeMockState
     {
-        public override ObjectResult CreateObjectResult(MockModel request)
+        public override IActionResult CreateObjectResult(MockModel request)
         {
-            ObjectResult objectResult = base.CreateObjectResult(request);
+            ObjectResult objectResult = (ObjectResult)base.CreateObjectResult(request);
             objectResult.Value = Newtonsoft.Json.JsonConvert.DeserializeObject<object>(request.Body);
             return objectResult;
         }

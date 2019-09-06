@@ -56,17 +56,19 @@ namespace Mocker.Services.Concretes
         public IContentTypeMockState GetState(string contentType)
         {
             ContentTypeEnum @enum = ConvertToEnum(contentType);
+
             switch (@enum)
             {
                 case ContentTypeEnum.ApplicationJson:
                     return new ApplicationJsonMockState();
+                case ContentTypeEnum.TextHtml:
+                    return new TextHtmlMockState();
                 case ContentTypeEnum.ApplicationXWWWFormUrlencoded:
                 case ContentTypeEnum.ApplicationXHtmlXml:
                 case ContentTypeEnum.ApplicationXml:
                 case ContentTypeEnum.MultipartFormData:
                 case ContentTypeEnum.TextCss:
                 case ContentTypeEnum.TextCsv:
-                case ContentTypeEnum.TextHtml:
                 case ContentTypeEnum.TextJson:
                 case ContentTypeEnum.TextPlain:
                 case ContentTypeEnum.TextXml:
