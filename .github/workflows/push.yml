@@ -1,0 +1,21 @@
+name: CI
+on: 
+  push:
+    branches:
+    - master      # Eventos de Push sobre el branch 'master'
+  pull_request:
+    branches:
+    - master      # Eventos de Pull Request sobre el branch 'master'
+jobs:
+  build:
+    name: job
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.103' # Versión del SDK.
+    - run: dotnet publish -o app
