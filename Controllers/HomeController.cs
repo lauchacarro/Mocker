@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Mocker.Attributes;
+using Mocker.ContentTypeState;
 using Mocker.Models;
 using Mocker.Models.Requests;
 using Mocker.Services.Abstracts;
@@ -14,22 +15,20 @@ namespace Mocker.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IMockService _mockService;
+        private readonly IContentTypeService _contentTypeService;
 
-        public HomeController(IMockService mockService)
+        public HomeController(IMockService mockService, IContentTypeService contentTypeService)
         {
             _mockService = mockService;
+            _contentTypeService = contentTypeService;
         }
 
         [HttpAll("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {
             var mock = await _mockService.GetMock(guid);
-            ObjectResult objectResult = new ObjectResult(Newtonsoft.Json.JsonConvert.DeserializeObject<object>(mock.Result.Body));
-            objectResult.StatusCode = mock.Result.StatusCode;
-            MediaTypeCollection mediaType = new MediaTypeCollection();
-            mediaType.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(mock.Result.ContentType));
-            objectResult.ContentTypes = mediaType;
-            return objectResult;
+            IContentTypeMockState state = _contentTypeService.GetState(mock.Result.ContentType);
+            return state.CreateObjectResult(mock.Result);
         }
 
         [HttpPost("[action]")]
