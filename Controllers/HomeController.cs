@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Mocker.Attributes;
 using Mocker.Models;
 using Mocker.Models.Requests;
@@ -20,9 +21,15 @@ namespace Mocker.Controllers
         }
 
         [HttpAll("{guid}")]
-        public IActionResult Index(Guid guid)
+        public async Task<IActionResult> Index(Guid guid)
         {
-            return Ok();
+            var mock = await _mockService.GetMock(guid);
+            ObjectResult objectResult = new ObjectResult(Newtonsoft.Json.JsonConvert.DeserializeObject<object>(mock.Result.Body));
+            objectResult.StatusCode = mock.Result.StatusCode;
+            MediaTypeCollection mediaType = new MediaTypeCollection();
+            mediaType.Add(new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(mock.Result.ContentType));
+            objectResult.ContentTypes = mediaType;
+            return objectResult;
         }
 
         [HttpPost("[action]")]

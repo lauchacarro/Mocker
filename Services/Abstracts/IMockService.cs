@@ -9,6 +9,6 @@ namespace Mocker.Services.Abstracts
     {
         Task<ValidateResult> Validate(CreateMockRequest request);
         Task<OperationResult<Guid>> Create(CreateMockRequest request);
-        Task<OperationResult<Guid>> GetMock(Guid guid);
+        Task<OperationResult<CreateMockRequest>> GetMock(Guid guid);
     }
 }

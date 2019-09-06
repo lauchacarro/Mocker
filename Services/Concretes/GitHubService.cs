@@ -32,9 +32,10 @@ namespace Mocker.Services.Concretes
 
         }
 
-        public Task<string> GetFileContent(string path, Guid guid, string content)
+        public async Task<string> GetFileContent(string path, Guid guid)
         {
-            throw new NotImplementedException();
+            var contents = await _client.Repository.Content.GetAllContents(long.Parse(_configuration["GitHub:RepositoryID"]), Path.Combine(path, guid.ToString()));
+            return contents[0].Content;
         }
     }
 }

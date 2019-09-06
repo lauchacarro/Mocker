@@ -35,9 +35,16 @@ namespace Mocker.Services.Concretes
             return operationResult;
         }
 
-        public async Task<OperationResult<Guid>> GetMock(Guid guid)
+        public async Task<OperationResult<CreateMockRequest>> GetMock(Guid guid)
         {
-            throw new NotImplementedException();
+            string content = await _githubService.GetFileContent("mocks/httpmethods/GET", guid);
+            CreateMockRequest mock = Newtonsoft.Json.JsonConvert.DeserializeObject<CreateMockRequest>(content);
+            OperationResult<CreateMockRequest> operationResult = new OperationResult<CreateMockRequest>
+            {
+                Success = true,
+                Result = mock
+            };
+            return operationResult;
         }
 
         public async Task<ValidateResult> Validate(CreateMockRequest request)
