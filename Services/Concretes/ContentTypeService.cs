@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Mocker.ContentTypeState;
+using Mocker.Enums;
+using Mocker.Services.Abstracts;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Mocker.ContentTypeState;
-using Mocker.Enums;
-using Mocker.Services.Abstracts;
 
 namespace Mocker.Services.Concretes
 {
@@ -22,9 +22,8 @@ namespace Mocker.Services.Concretes
                     return listEnum[i];
                 }
             }
+
             throw new InvalidEnumArgumentException(nameof(contentType), -1, typeof(ContentTypeEnum));
-
-
         }
         public bool Validate(string contentType)
         {
@@ -45,9 +44,8 @@ namespace Mocker.Services.Concretes
             }
 
             return false;
-
-
         }
+
         public string NormalizeContentType(string contentType)
         {
             return contentType.Replace("/", "").Replace("-", "").Replace("+", "").Replace(" ", "").ToLower();

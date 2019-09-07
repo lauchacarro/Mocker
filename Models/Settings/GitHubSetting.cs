@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Mocker.Models.Settings
+﻿namespace Mocker.Models.Settings
 {
     public class GitHubSetting
     {

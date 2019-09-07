@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Mocker.Enums;
 using Mocker.Models;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
 {
@@ -28,52 +27,45 @@ namespace Mocker.Services.Concretes
             _guidMethodsFolderPath = Path.Combine(_githubSetting.HttpMethodsFolderPath, "guidmethods");
         }
 
-        public async Task<OperationResult<Guid>> Create(params MockModel[] request)
+        public async Task<Guid> Create(params MockModel[] request)
         {
-            OperationResult<Guid> operationResult = new OperationResult<Guid>();
             Guid guid = Guid.NewGuid();
 
-            GuidMethodsModel guidMethodsModel = new GuidMethodsModel();
-            guidMethodsModel.HttpMethods = request.Select(x => x.HttpMethod).ToArray();
-
+            GuidMethodsModel guidMethodsModel = new GuidMethodsModel
+            {
+                HttpMethods = request.Select(x => x.HttpMethod).ToArray()
+            };
 
             await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonConvert.SerializeObject(guidMethodsModel));
-
-
 
             foreach (MockModel mock in request)
             {
                 string content = JsonConvert.SerializeObject(mock);
-
-                await _githubService.CreateFile(Path.Combine(_githubSetting.HttpMethodsFolderPath, mock.HttpMethod.ToUpper()), guid, content);
+                string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, mock.HttpMethod.ToUpper());
+                await _githubService.CreateFile(path, guid, content);
             }
 
-
-
-            operationResult.Result = guid;
-            operationResult.Success = true;
-
-            return operationResult;
+            return guid;
         }
 
-        public async Task<OperationResult<MockModel>> GetMock(Guid guid, string httpMethod)
+        public async Task<GuidMethodsModel> GetHttpMethodsByGuid(Guid guid)
         {
             string jsonGuidMethodsModel = await _githubService.GetFileContent(_guidMethodsFolderPath, guid);
-            GuidMethodsModel guidMethodsModel = JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethodsModel);
 
-            if (!guidMethodsModel.HttpMethods.Contains(httpMethod))
-            {
-                httpMethod = "GET";
-            }
+            return JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethodsModel);
+        }
 
-            string content = await _githubService.GetFileContent(Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper()), guid);
-            MockModel mock = JsonConvert.DeserializeObject<MockModel>(content);
-            OperationResult<MockModel> operationResult = new OperationResult<MockModel>
-            {
-                Success = true,
-                Result = mock
-            };
-            return operationResult;
+        public async Task<MockModel> GetMock(Guid guid, string httpMethod)
+        {
+            GuidMethodsModel guidMethodsModel = await GetHttpMethodsByGuid(guid);
+
+            httpMethod = guidMethodsModel.HttpMethods.Contains(httpMethod) ? httpMethod : "GET";
+
+            string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper());
+
+            string content = await _githubService.GetFileContent(path, guid);
+
+            return JsonConvert.DeserializeObject<MockModel>(content);
         }
 
         public async Task<ValidateResult> Validate(params MockModel[] request)
@@ -86,7 +78,7 @@ namespace Mocker.Services.Concretes
                 errorMessages.Add(ErrorMessageCodeEnum.HttpMethodDuplicate);
                 return new ValidateResult()
                 {
-                    Success = !errorMessages.Any(),
+                    Success = false,
                     ErrorMessages = errorMessages.ToArray()
                 };
             }

@@ -19,7 +19,7 @@ namespace Mocker.ContentTypeState
             };
             objectResult.ContentTypes = mediaType;
 
-            
+
             return objectResult;
         }
     }

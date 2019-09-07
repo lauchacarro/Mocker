@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mocker.Attributes;
 using Mocker.ContentTypeState;
+using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Services.Abstracts;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {
@@ -26,16 +26,10 @@ namespace Mocker.Controllers
         [HttpAll("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {
-            var mock = await _mockService.GetMock(guid, Request.Method);
-            IContentTypeMockState state = _contentTypeService.GetState(mock.Result.ContentType);
-            if (mock.Result.Headers != null && mock.Result.Headers.Any())
-            {
-                foreach (KeyValuePair<string, string> header in mock.Result.Headers)
-                {
-                    Response.Headers.Add(header.Key, header.Value);
-                }
-            }
-            return state.CreateObjectResult(mock.Result);
+            MockModel mock = await _mockService.GetMock(guid, Request.Method);
+            IContentTypeMockState state = _contentTypeService.GetState(mock.ContentType);
+            Response.AddHeaders(mock.Headers);
+            return state.CreateObjectResult(mock);
         }
 
         [HttpPost("[action]")]
@@ -44,21 +38,14 @@ namespace Mocker.Controllers
             var validateResult = await _mockService.Validate(request);
             if (validateResult.Success)
             {
-                OperationResult<Guid> operationResult = await _mockService.Create(request);
-                if (operationResult.Success)
-                {
-                    return Created("/api/" + operationResult.Result, operationResult.Result);
-                }
-                else
-                {
-                    return BadRequest(operationResult.ErrorMessages);
-                }
+                Guid guid = await _mockService.Create(request);
+
+                return Created("/api/" + guid, guid);
             }
             else
             {
                 return BadRequest(validateResult.ErrorMessages);
             }
-
         }
 
         [HttpPost("[action]")]
@@ -67,23 +54,14 @@ namespace Mocker.Controllers
             var validateResult = await _mockService.Validate(request.Mocks.ToArray());
             if (validateResult.Success)
             {
-                OperationResult<Guid> operationResult = await _mockService.Create(request.Mocks.ToArray());
-                if (operationResult.Success)
-                {
-                    return Created("/api/" + operationResult.Result, operationResult.Result);
-                }
-                else
-                {
-                    return BadRequest(operationResult.ErrorMessages);
-                }
+                Guid guid = await _mockService.Create(request.Mocks.ToArray());
+
+                return Created("/api/" + guid, guid);
             }
             else
             {
                 return BadRequest(validateResult.ErrorMessages);
             }
-
         }
-
-
     }
 }
