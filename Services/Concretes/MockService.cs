@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Mocker.Enums;
+using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
@@ -14,14 +15,12 @@ namespace Mocker.Services.Concretes
 {
     public class MockService : IMockService
     {
-        private readonly IContentTypeService _contentTypeService;
         private readonly IGitHubService _githubService;
         private readonly GitHubSetting _githubSetting;
         private readonly string _guidMethodsFolderPath;
 
-        public MockService(IContentTypeService contentTypeService, IGitHubService githubService, IOptions<GitHubSetting> githubSetting)
+        public MockService(IGitHubService githubService, IOptions<GitHubSetting> githubSetting)
         {
-            _contentTypeService = contentTypeService;
             _githubService = githubService;
             _githubSetting = githubSetting.Value;
             _guidMethodsFolderPath = Path.Combine(_githubSetting.HttpMethodsFolderPath, "guidmethods");
@@ -33,7 +32,7 @@ namespace Mocker.Services.Concretes
 
             GuidMethodsModel guidMethodsModel = new GuidMethodsModel
             {
-                HttpMethods = request.Select(x => x.HttpMethod).ToArray()
+                HttpMethods = request.Select(x => x.HttpMethod.ToUpper()).ToArray()
             };
 
             await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonConvert.SerializeObject(guidMethodsModel));
@@ -70,37 +69,34 @@ namespace Mocker.Services.Concretes
 
         public async Task<ValidateResult> Validate(params MockModel[] request)
         {
-
+            ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
 
-            if (request.GroupBy(x => x.HttpMethod.ToLower()).Any(x => x.Count() > 1))
+
+            request.ValidateDuplicateMethod(() =>
             {
                 errorMessages.Add(ErrorMessageCodeEnum.HttpMethodDuplicate);
-                return new ValidateResult()
-                {
-                    Success = false,
-                    ErrorMessages = errorMessages.ToArray()
-                };
-            }
+            });
+
 
             foreach (MockModel mock in request)
             {
-                if (mock.StatusCode <= 0)
+                mock.ValidateStatusCodeSmallerThanOne(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.StatusCodeSmallerThanOne);
-                }
-                if (!_contentTypeService.Validate(mock.ContentType))
+                })
+                .ValidateContentTypeInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.InvalidContentType);
-                }
-                if (string.IsNullOrWhiteSpace(mock.Charset))
+                })
+                .ValidateCharsetInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.InvalidCharset);
-                }
-                if (string.IsNullOrWhiteSpace(mock.HttpMethod))
+                })
+                .ValidateHttpMethodInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.invalidMethod);
-                }
+                });
             }
 
 

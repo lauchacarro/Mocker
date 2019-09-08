@@ -1,5 +1,6 @@
 ﻿using Mocker.ContentTypeState;
 using Mocker.Enums;
+using Mocker.Extensions;
 using Mocker.Services.Abstracts;
 using System;
 using System.Collections.Generic;
@@ -10,45 +11,23 @@ namespace Mocker.Services.Concretes
 {
     public class ContentTypeService : IContentTypeService
     {
-        private readonly List<string> contentTypeNames = Enum.GetNames(typeof(ContentTypeEnum)).Select(x => x.ToLower()).ToList();
+        private readonly IEnumerable<ContentTypeEnum> _enums;
+
+        public ContentTypeService()
+        {
+            _enums = new List<ContentTypeEnum>().AddEnums();
+        }
+
         public ContentTypeEnum ConvertToEnum(string contentType)
         {
-            ContentTypeEnum[] listEnum = Enum.GetValues(typeof(ContentTypeEnum)).Cast<ContentTypeEnum>().ToArray();
+            ContentTypeEnum result = ContentTypeEnum.TextPlain;
 
-            for (int i = 0; i < contentTypeNames.Count; i++)
+            _enums.Contains(contentType, (@enum) =>
             {
-                if (contentTypeNames[i].ToLower() == NormalizeContentType(contentType))
-                {
-                    return listEnum[i];
-                }
-            }
+                result = @enum;
+            });
 
-            throw new InvalidEnumArgumentException(nameof(contentType), -1, typeof(ContentTypeEnum));
-        }
-        public bool Validate(string contentType)
-        {
-            if (contentTypeNames.Contains(NormalizeContentType(contentType)))
-            {
-                return true;
-            }
-
-            foreach (var member in typeof(ContentTypeEnum).GetMembers())
-            {
-                var valueAttributes = member.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-                var description = ((DescriptionAttribute)valueAttributes[0]).Description;
-                if (NormalizeContentType(description) == NormalizeContentType(contentType))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public string NormalizeContentType(string contentType)
-        {
-            return contentType.Replace("/", "").Replace("-", "").Replace("+", "").Replace(" ", "").ToLower();
+            return result;
         }
 
         public IContentTypeMockState GetState(string contentType)

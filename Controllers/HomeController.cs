@@ -33,23 +33,7 @@ namespace Mocker.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Create(MockModel request)
-        {
-            var validateResult = await _mockService.Validate(request);
-            if (validateResult.Success)
-            {
-                Guid guid = await _mockService.Create(request);
-
-                return Created("/api/" + guid, guid);
-            }
-            else
-            {
-                return BadRequest(validateResult.ErrorMessages);
-            }
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CreateMany(MockModelEnumerable request)
+        public async Task<IActionResult> Create(MockModelEnumerable request)
         {
             var validateResult = await _mockService.Validate(request.Mocks.ToArray());
             if (validateResult.Success)
