@@ -67,7 +67,7 @@ namespace Mocker.Services.Concretes
             return JsonConvert.DeserializeObject<MockModel>(content);
         }
 
-        public async Task<ValidateResult> Validate(IEnumerable<MockModel> request)
+        public ValidateResult Validate(IEnumerable<MockModel> request)
         {
             ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();

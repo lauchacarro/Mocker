@@ -28,7 +28,14 @@ namespace Mocker.Controllers
         {
             MockModel mock = await _mockService.GetMock(guid, Request.Method);
             IContentTypeMockState state = _contentTypeService.GetState(mock.ContentType);
+
+            Request.HasQueryValues((query) =>
+            {
+                mock.ResolveDynamicBody(query);
+            });
+
             Response.AddHeaders(mock.Headers);
+
             return state.CreateObjectResult(mock);
         }
 
@@ -37,7 +44,7 @@ namespace Mocker.Controllers
         {
             ObjectResult statusCodeResult = new ObjectResult(null);
 
-            ValidateResult validateResult = await _mockService.Validate(request.Mocks);
+            ValidateResult validateResult = _mockService.Validate(request.Mocks);
 
             (await validateResult.Success(async () =>
             {
