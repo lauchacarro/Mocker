@@ -35,17 +35,23 @@ namespace Mocker.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Create(MockModelEnumerable request)
         {
-            var validateResult = await _mockService.Validate(request.Mocks.ToArray());
-            if (validateResult.Success)
-            {
-                Guid guid = await _mockService.Create(request.Mocks.ToArray());
+            ObjectResult statusCodeResult = new ObjectResult(null);
 
-                return Created("/api/" + guid, guid);
-            }
-            else
+            ValidateResult validateResult = await _mockService.Validate(request.Mocks);
+
+            (await validateResult.Success(async () =>
             {
-                return BadRequest(validateResult.ErrorMessages);
-            }
+                Guid guid = await _mockService.Create(request.Mocks);
+                statusCodeResult = Created("/api/" + guid, guid);
+            }))
+            .Error((errorMessages) =>
+            {
+                statusCodeResult = BadRequest(errorMessages);
+            });
+
+            return statusCodeResult;
+
+
         }
     }
 }

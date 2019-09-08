@@ -17,7 +17,7 @@ namespace Mocker.Extensions
             return mocks;
         }
 
-        public static MockModel ValidateStatusCodeSmallerThanOne(this MockModel mock, Action callback)
+        public static MockModel IsStatusCodeSmallerThanOne(this MockModel mock, Action callback)
         {
             if (mock.StatusCode <= 0)
                 callback();
@@ -25,7 +25,7 @@ namespace Mocker.Extensions
             return mock;
         }
 
-        public static MockModel ValidateContentTypeInvalid(this MockModel mock, Action callback)
+        public static MockModel IsContentTypeInvalid(this MockModel mock, Action callback)
         {
             IEnumerable<ContentTypeEnum> contentTypeNames = new List<ContentTypeEnum>();
 
@@ -38,7 +38,7 @@ namespace Mocker.Extensions
             return mock;
         }
 
-        public static MockModel ValidateCharsetInvalid(this MockModel mock, Action callback)
+        public static MockModel IsCharsetInvalid(this MockModel mock, Action callback)
         {
             IEnumerable<CharsetEnum> charsetNames = new List<CharsetEnum>();
 
@@ -51,7 +51,7 @@ namespace Mocker.Extensions
             return mock;
         }
 
-        public static MockModel ValidateHttpMethodInvalid(this MockModel mock, Action callback)
+        public static MockModel IsHttpMethodInvalid(this MockModel mock, Action callback)
         {
             IEnumerable<HttpMethod> httpMethodNames = new List<HttpMethod>();
 

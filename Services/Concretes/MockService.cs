@@ -26,7 +26,7 @@ namespace Mocker.Services.Concretes
             _guidMethodsFolderPath = Path.Combine(_githubSetting.HttpMethodsFolderPath, "guidmethods");
         }
 
-        public async Task<Guid> Create(params MockModel[] request)
+        public async Task<Guid> Create(IEnumerable<MockModel> request)
         {
             Guid guid = Guid.NewGuid();
 
@@ -67,7 +67,7 @@ namespace Mocker.Services.Concretes
             return JsonConvert.DeserializeObject<MockModel>(content);
         }
 
-        public async Task<ValidateResult> Validate(params MockModel[] request)
+        public async Task<ValidateResult> Validate(IEnumerable<MockModel> request)
         {
             ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
@@ -81,19 +81,19 @@ namespace Mocker.Services.Concretes
 
             foreach (MockModel mock in request)
             {
-                mock.ValidateStatusCodeSmallerThanOne(() =>
+                mock.IsStatusCodeSmallerThanOne(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.StatusCodeSmallerThanOne);
                 })
-                .ValidateContentTypeInvalid(() =>
+                .IsContentTypeInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.InvalidContentType);
                 })
-                .ValidateCharsetInvalid(() =>
+                .IsCharsetInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.InvalidCharset);
                 })
-                .ValidateHttpMethodInvalid(() =>
+                .IsHttpMethodInvalid(() =>
                 {
                     errorMessages.Add(ErrorMessageCodeEnum.invalidMethod);
                 });

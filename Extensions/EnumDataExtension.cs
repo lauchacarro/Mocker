@@ -24,10 +24,10 @@ namespace Mocker.Extensions
         public static IEnumerable<T> Contains<T>(this IEnumerable<T> enumerable, string original, Action<T> callback)
         {
             original = original.NormalizeData();
-            var enumerableNormalized = enumerable.NormalizeEnumerableData();
-
-            if (enumerableNormalized.Contains(original))
+            
+            if (enumerable.ContainsBase(original))
             {
+                var enumerableNormalized = enumerable.NormalizeEnumerableData();
                 var index = enumerableNormalized.ToList().IndexOf(original);
                 callback(enumerable.ToArray()[index]);
             }
@@ -38,14 +38,22 @@ namespace Mocker.Extensions
         public static IEnumerable<T> NoContains<T>(this IEnumerable<T> enumerable, string original, Action callback)
         {
             original = original.NormalizeData();
-            var enumerableNormalized = enumerable.NormalizeEnumerableData();
 
-            if (!enumerableNormalized.Contains(original))
+            if (!enumerable.ContainsBase(original))
             {
                 callback();
             }
 
             return enumerable;
+        }
+
+
+        private static bool ContainsBase<T>(this IEnumerable<T> enumerable, string original)
+        {
+            original = original.NormalizeData();
+            var enumerableNormalized = enumerable.NormalizeEnumerableData();
+
+            return enumerableNormalized.Contains(original);
         }
     }
 }
