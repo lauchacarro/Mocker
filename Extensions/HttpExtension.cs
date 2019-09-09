@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Mocker.Extensions
 {
@@ -22,6 +23,13 @@ namespace Mocker.Extensions
         {
             if (request.Query.Count > 0)
                 callback(request.Query);
+
+            return request;
+        }
+        public static async Task<HttpRequest> HasFiles(this HttpRequest request, Func<IFormFile, Task> callback)
+        {
+            if (request.Form.Files.Count > 0)
+                await callback(request.Form.Files[0]);
 
             return request;
         }

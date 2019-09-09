@@ -1,5 +1,5 @@
-﻿using Mocker.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Mocker.Enums;
 
 namespace Mocker.Models
 {

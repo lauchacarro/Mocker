@@ -1,11 +1,11 @@
-﻿using Mocker.ContentTypeState;
-using Mocker.Enums;
-using Mocker.Extensions;
-using Mocker.Services.Abstracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Mocker.ContentTypeState;
+using Mocker.Enums;
+using Mocker.Extensions;
+using Mocker.Services.Abstracts;
 
 namespace Mocker.Services.Concretes
 {
@@ -44,7 +44,7 @@ namespace Mocker.Services.Concretes
                 case ContentTypeEnum.TextHtml:
                 case ContentTypeEnum.ApplicationJavascript:
                 case ContentTypeEnum.ApplicationXHtmlXml:
-                    
+
                 case ContentTypeEnum.ApplicationXml:
                 case ContentTypeEnum.TextXml:
 

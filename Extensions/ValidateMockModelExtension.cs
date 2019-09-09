@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Mocker.Enums;
-using Mocker.Models.Mock;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Mocker.Enums;
+using Mocker.Models.Mock;
 
 namespace Mocker.Extensions
 {

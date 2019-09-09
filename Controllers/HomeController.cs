@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Mocker.Attributes;
 using Mocker.ContentTypeState;
 using Mocker.Extensions;
-using Mocker.Models.Mock;
 using Mocker.Models;
+using Mocker.Models.Mock;
 using Mocker.Services.Abstracts;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {

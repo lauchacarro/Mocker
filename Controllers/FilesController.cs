@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mocker.Extensions;
+using Mocker.Models.File;
+using Mocker.Services.Abstracts;
 
 namespace Mocker.Controllers
 {
@@ -13,29 +12,48 @@ namespace Mocker.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> Create(List<IFormFile> files)
+        private readonly IFileService _fileService;
+
+        public FilesController(IFileService fileService)
         {
-            long size = files.Sum(f => f.Length);
+            _fileService = fileService;
+        }
 
-            var filePath = Path.GetTempFileName();
+        [HttpGet("{guid}")]
+        public async Task<IActionResult> Index(Guid guid)
+        {
+            FileModel file = await _fileService.GetFile(guid);
+            byte[] bytes = Convert.FromBase64String(file.Base64);
 
-            foreach (var formFile in files)
+            return File(bytes, file.ContentType, file.Name);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create()
+        {
+            IActionResult statusCodeResult = BadRequest();
+
+            await Request.HasFiles(async (file) =>
             {
-                if (formFile.Length > 0)
+                var filePath = Path.GetTempFileName();
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(stream);
-                        byte[] bytes = new byte[stream.Length];
-                        stream.Position = 0;
-                        stream.Read(bytes, 0, (int)stream.Length);
-                        string data = Encoding.ASCII.GetString(bytes);
-                    }
-                }
-            }
+                    await file.CopyToAsync(stream);
 
-            return Ok(new { count = files.Count, size, filePath });
+                    byte[] bytes = stream.ConvertToBlob();
+
+                    FileModel fileModel = new FileModel
+                    {
+                        Name = file.FileName,
+                        Base64 = stream.ToBase64String(),
+                        ContentType = file.ContentType
+                    };
+                    Guid guid = await _fileService.Create(fileModel);
+                    statusCodeResult = Created("/api/" + guid, guid);
+                }
+            });
+
+            return statusCodeResult;
         }
     }
 }

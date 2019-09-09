@@ -1,8 +1,8 @@
-﻿using Mocker.Models.Mock;
-using Mocker.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Mocker.Models;
+using Mocker.Models.Mock;
 
 namespace Mocker.Services.Abstracts
 {

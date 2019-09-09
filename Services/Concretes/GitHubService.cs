@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using Mocker.Models.Settings;
-using Mocker.Services.Abstracts;
-using Octokit;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Mocker.Models.Settings;
+using Mocker.Services.Abstracts;
+using Octokit;
 
 namespace Mocker.Services.Concretes
 {

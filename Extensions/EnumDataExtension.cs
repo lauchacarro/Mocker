@@ -24,7 +24,7 @@ namespace Mocker.Extensions
         public static IEnumerable<T> Contains<T>(this IEnumerable<T> enumerable, string original, Action<T> callback)
         {
             original = original.NormalizeData();
-            
+
             if (enumerable.ContainsBase(original))
             {
                 var enumerableNormalized = enumerable.NormalizeEnumerableData();
