@@ -37,19 +37,24 @@ namespace Mocker.Services.Concretes
             switch (@enum)
             {
                 case ContentTypeEnum.ApplicationJson:
-                    return new ApplicationJsonMockState();
-                case ContentTypeEnum.TextHtml:
-                    return new TextHtmlMockState();
-                case ContentTypeEnum.ApplicationXWWWFormUrlencoded:
-                case ContentTypeEnum.ApplicationXHtmlXml:
-                case ContentTypeEnum.ApplicationXml:
-                case ContentTypeEnum.MultipartFormData:
-                case ContentTypeEnum.TextCss:
-                case ContentTypeEnum.TextCsv:
                 case ContentTypeEnum.TextJson:
-                case ContentTypeEnum.TextPlain:
+
+                    return new JsonMockState();
+                case ContentTypeEnum.TextCss:
+                case ContentTypeEnum.TextHtml:
+                case ContentTypeEnum.ApplicationJavascript:
+                case ContentTypeEnum.ApplicationXHtmlXml:
+                    
+                case ContentTypeEnum.ApplicationXml:
                 case ContentTypeEnum.TextXml:
+
+                case ContentTypeEnum.MultipartFormData:
+                case ContentTypeEnum.ApplicationXWWWFormUrlencoded:
+
+                case ContentTypeEnum.TextCsv:
+                case ContentTypeEnum.TextPlain:
                     return new ContentTypeMockState();
+
                 default:
                     throw new InvalidEnumArgumentException(nameof(contentType), (int)@enum, typeof(ContentTypeEnum));
             }

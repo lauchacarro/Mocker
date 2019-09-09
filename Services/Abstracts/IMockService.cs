@@ -1,4 +1,5 @@
-﻿using Mocker.Models;
+﻿using Mocker.Models.Mock;
+using Mocker.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

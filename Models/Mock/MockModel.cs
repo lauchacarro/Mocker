@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mocker.Models
+namespace Mocker.Models.Mock
 {
     public class MockModel
     {
@@ -10,6 +10,5 @@ namespace Mocker.Models
         public string Charset { get; set; }
         public KeyValuePair<string, string>[] Headers { get; set; }
         public string Body { get; set; }
-        public string[] Cors { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Mocker.Enums;
 using Mocker.Extensions;
 using Mocker.Models;
+using Mocker.Models.Mock;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Newtonsoft.Json;

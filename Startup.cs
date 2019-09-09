@@ -19,6 +19,8 @@ namespace Mocker
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddMvc();
 
             services.AddOptions();
@@ -35,7 +37,9 @@ namespace Mocker
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(
+                options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+            );
             app.UseMvc();
         }
     }

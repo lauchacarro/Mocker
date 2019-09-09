@@ -16,6 +16,9 @@ namespace Mocker.Enums
         [Description("application/xml")]
         ApplicationXml,
 
+        [Description("application/javascript")]
+        ApplicationJavascript,
+
         [Description("multipart/form-data")]
         MultipartFormData,
 

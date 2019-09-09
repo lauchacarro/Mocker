@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Mocker.Models;
+using Mocker.Models.Mock;
 
 namespace Mocker.ContentTypeState
 {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Mocker.Models;
+using Mocker.Models.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;

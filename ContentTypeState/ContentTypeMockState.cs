@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Mocker.Models;
+using Mocker.Models.Mock;
 
 namespace Mocker.ContentTypeState
 {
@@ -8,19 +7,12 @@ namespace Mocker.ContentTypeState
     {
         public virtual IActionResult CreateObjectResult(MockModel request)
         {
-            ObjectResult objectResult = new ObjectResult(request.Body)
+            return new ContentResult
             {
-                StatusCode = request.StatusCode
+                ContentType = request.ContentType,
+                StatusCode = request.StatusCode,
+                Content = request.Body
             };
-
-            MediaTypeCollection mediaType = new MediaTypeCollection
-            {
-                new Microsoft.Net.Http.Headers.MediaTypeHeaderValue(request.ContentType)
-            };
-            objectResult.ContentTypes = mediaType;
-
-
-            return objectResult;
         }
     }
 }

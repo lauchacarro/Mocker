@@ -2,6 +2,7 @@
 using Mocker.Attributes;
 using Mocker.ContentTypeState;
 using Mocker.Extensions;
+using Mocker.Models.Mock;
 using Mocker.Models;
 using Mocker.Services.Abstracts;
 using System;

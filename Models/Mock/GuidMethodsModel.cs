@@ -1,4 +1,4 @@
-﻿namespace Mocker.Models
+﻿namespace Mocker.Models.Mock
 {
     public class GuidMethodsModel
     {

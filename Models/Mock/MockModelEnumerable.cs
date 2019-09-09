@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mocker.Models
+namespace Mocker.Models.Mock
 {
     public class MockModelEnumerable
     {
