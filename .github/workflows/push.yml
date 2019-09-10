@@ -18,4 +18,36 @@ jobs:
     - uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '2.2.103' # Versión del SDK.
-    - run: dotnet publish -o app
+    - run: dotnet build --configuration Release
+  deployHeroku:
+    name: Deploy Heroku
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: login
+      uses: actions/heroku@master
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      with:
+        args: container:login
+    - name: dotnet publish
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.103' # SDK Version to use.
+    - name: build release
+      run:  dotnet publish -o app
+        
+    - name: herokuPush
+      uses: actions/heroku@master
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      with:
+        args: container:push -a mocker-desa web
+    - name: herokuRelease
+      uses: actions/heroku@master
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      with:
+        args: container:release -a mocker-desa web
+    
