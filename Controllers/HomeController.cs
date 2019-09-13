@@ -48,8 +48,11 @@ namespace Mocker.Controllers
 
             (await validateResult.Success(async () =>
             {
-                Guid guid = await _mockService.Create(request.Mocks);
-                statusCodeResult = Created("/api/" + guid, guid);
+                GuidResponse guidResponse = new GuidResponse()
+                {
+                    Guid = await _mockService.Create(request.Mocks)
+                };
+                statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
             }))
             .Error((errorMessages) =>
             {
