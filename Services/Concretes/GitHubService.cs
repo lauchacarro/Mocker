@@ -43,8 +43,15 @@ namespace Mocker.Services.Concretes
 
         public async Task<string> GetFileContent(string path, Guid guid)
         {
-            IReadOnlyList<RepositoryContent> contents = await _client.Repository.Content.GetAllContents(_githubSetting.RepositoryID, Path.Combine(path, guid.ToString()));
-            return contents[0].Content;
+            try
+            {
+                IReadOnlyList<RepositoryContent> contents = await _client.Repository.Content.GetAllContents(_githubSetting.RepositoryID, Path.Combine(path, guid.ToString()));
+                return contents[0].Content;
+            }
+            catch (Octokit.NotFoundException)
+            {
+                return null;
+            }
         }
     }
 }

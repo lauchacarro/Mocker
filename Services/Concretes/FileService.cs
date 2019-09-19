@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Mocker.Extensions;
 using Mocker.Models.File;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
@@ -30,9 +31,15 @@ namespace Mocker.Services.Concretes
 
         public async Task<FileModel> GetFile(Guid guid)
         {
-            string jsonFileModel = await _githubService.GetFileContent(_githubSetting.FilePath, guid);
+            FileModel file = null;
+            string jsonFile = await _githubService.GetFileContent(_githubSetting.FilePath, guid);
 
-            return JsonConvert.DeserializeObject<FileModel>(jsonFileModel);
+            jsonFile.IsNotNull(() =>
+            {
+                file = JsonConvert.DeserializeObject<FileModel>(jsonFile);
+            });
+
+            return file;
         }
     }
 }

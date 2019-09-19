@@ -26,17 +26,27 @@ namespace Mocker.Controllers
         [HttpAll("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {
+            IActionResult result = null;
             MockModel mock = await _mockService.GetMock(guid, Request.Method);
-            IContentTypeMockState state = _contentTypeService.GetState(mock.ContentType);
-
-            Request.HasQueryValues((query) =>
+            mock.IsNotNull(() =>
             {
-                mock.ResolveDynamicBody(query);
+                IContentTypeMockState state = _contentTypeService.GetState(mock.ContentType);
+
+                Request.HasQueryValues((query) =>
+                {
+                    mock.ResolveDynamicBody(query);
+                });
+
+                Response.AddHeaders(mock.Headers);
+
+                result = state.CreateObjectResult(mock);
+            })
+            .IsNull(() =>
+            {
+                result = NotFound();
             });
 
-            Response.AddHeaders(mock.Headers);
-
-            return state.CreateObjectResult(mock);
+            return result;
         }
 
         [HttpPost("[action]")]
