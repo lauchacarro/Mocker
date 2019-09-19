@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Mocker.Extensions;
+using Mocker.Models;
 using Mocker.Models.File;
 using Mocker.Services.Abstracts;
 
@@ -48,8 +49,12 @@ namespace Mocker.Controllers
                         Base64 = stream.ToBase64String(),
                         ContentType = file.ContentType
                     };
-                    Guid guid = await _fileService.Create(fileModel);
-                    statusCodeResult = Created("/api/" + guid, guid);
+
+                    GuidResponse guidResponse = new GuidResponse()
+                    {
+                        Guid = await _fileService.Create(fileModel)
+                    };
+                    statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
                 }
             });
 
