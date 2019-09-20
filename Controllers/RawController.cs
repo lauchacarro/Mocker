@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mocker.Attributes;
 using Mocker.ContentTypeState;
@@ -27,7 +24,7 @@ namespace Mocker.Controllers
             _fileService = fileService;
             _contentTypeService = contentTypeService;
         }
-        [HttpAll("mock/{guid}")]
+        [HttpAll("{guid}")]
         public async Task<IActionResult> RawMock(Guid guid)
         {
             IActionResult result = NotFound();
@@ -41,7 +38,7 @@ namespace Mocker.Controllers
             return result;
         }
 
-        [HttpAll("file/{guid}")]
+        [HttpAll("files/{guid}")]
         public async Task<IActionResult> RawFile(Guid guid)
         {
             IActionResult result = NotFound();

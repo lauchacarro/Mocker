@@ -53,7 +53,7 @@ namespace Mocker.Services.Concretes
             GuidMethodsModel guidMethods = null;
             string jsonGuidMethods = await _githubService.GetFileContent(_guidMethodsFolderPath, guid);
 
-            jsonGuidMethods.IsNotNull(() => 
+            jsonGuidMethods.IsNotNull(() =>
             {
                 guidMethods = JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethods);
             });

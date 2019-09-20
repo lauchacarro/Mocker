@@ -16,7 +16,7 @@ namespace Mocker.Extensions
             return enumerable.Select(x => x.ToString().NormalizeData());
         }
 
-        public static IEnumerable<T> AddEnums<T>(this IEnumerable<T> enumerable) 
+        public static IEnumerable<T> AddEnums<T>(this IEnumerable<T> enumerable)
         {
             return enumerable.Concat(Enum.GetValues(typeof(T)).Cast<T>());
         }
