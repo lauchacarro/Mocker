@@ -53,14 +53,8 @@ namespace Mocker.Extensions
 
         public static MockModel IsHttpMethodInvalid(this MockModel mock, Action callback)
         {
-            IEnumerable<HttpMethod> httpMethodNames = new List<HttpMethod>();
-
-            httpMethodNames.AddEnums()
-            .NoContains(mock.HttpMethod, () =>
-            {
+            if (string.IsNullOrWhiteSpace(mock.HttpMethod))
                 callback();
-            });
-
             return mock;
         }
     }
