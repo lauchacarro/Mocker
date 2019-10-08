@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mocker.Attributes;
 using Mocker.ContentTypeState;
 using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Mock;
 using Mocker.Services.Abstracts;
+using System;
+using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {
@@ -23,6 +23,7 @@ namespace Mocker.Controllers
             _contentTypeService = contentTypeService;
         }
 
+        [Obsolete]
         [HttpAll("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {

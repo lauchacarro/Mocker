@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mocker.Extensions;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Mocker.Services.Concretes;
@@ -41,6 +42,7 @@ namespace Mocker
             app.UseCors(
                 options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
             );
+            app.UseGetMock();
             app.UseMvc();
         }
     }
