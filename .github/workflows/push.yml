@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '2.2.103' # Versión del SDK.
+        dotnet-version: '3.0.100' # Versión del SDK.
     - run: dotnet build --configuration Release
   deployHeroku:
     name: Deploy Heroku
