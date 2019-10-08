@@ -40,11 +40,11 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       with:
-        args: container:push -a mocker-desa web
+        args: container:push -a mockercloud web
     - name: herokuRelease
       uses: actions/heroku@master
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       with:
-        args: container:release -a mocker-desa web
+        args: container:release -a mockercloud web
     
