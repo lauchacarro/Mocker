@@ -23,7 +23,7 @@ namespace Mocker.Controllers
             _contentTypeService = contentTypeService;
         }
 
-        [Obsolete]
+        [Obsolete("this action is never going to be called since the GetMockMiddleware middleware is going to run instead", true)]
         [HttpAll("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {
