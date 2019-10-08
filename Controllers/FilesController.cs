@@ -37,25 +37,23 @@ namespace Mocker.Controllers
             await Request.HasFiles(async (file) =>
             {
                 var filePath = Path.GetTempFileName();
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                byte[] bytes = stream.ConvertToBlob();
+
+                FileModel fileModel = new FileModel
                 {
-                    await file.CopyToAsync(stream);
+                    Name = file.FileName,
+                    Base64 = stream.ToBase64String(),
+                    ContentType = file.ContentType
+                };
 
-                    byte[] bytes = stream.ConvertToBlob();
-
-                    FileModel fileModel = new FileModel
-                    {
-                        Name = file.FileName,
-                        Base64 = stream.ToBase64String(),
-                        ContentType = file.ContentType
-                    };
-
-                    GuidResponse guidResponse = new GuidResponse()
-                    {
-                        Guid = await _fileService.Create(fileModel)
-                    };
-                    statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
-                }
+                GuidResponse guidResponse = new GuidResponse()
+                {
+                    Guid = await _fileService.Create(fileModel)
+                };
+                statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
             });
 
             return statusCodeResult;

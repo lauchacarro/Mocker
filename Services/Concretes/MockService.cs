@@ -5,11 +5,11 @@ using Mocker.Models;
 using Mocker.Models.Mock;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
@@ -36,11 +36,11 @@ namespace Mocker.Services.Concretes
                 HttpMethods = request.Select(x => x.HttpMethod.ToUpper()).ToArray()
             };
 
-            await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonConvert.SerializeObject(guidMethodsModel));
+            await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonSerializer.Serialize(guidMethodsModel));
 
             foreach (MockModel mock in request)
             {
-                string content = JsonConvert.SerializeObject(mock);
+                string content = JsonSerializer.Serialize(mock);
                 string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, mock.HttpMethod.ToUpper());
                 await _githubService.CreateFile(path, guid, content);
             }
@@ -55,7 +55,7 @@ namespace Mocker.Services.Concretes
 
             jsonGuidMethods.IsNotNull(() =>
             {
-                guidMethods = JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethods);
+                guidMethods = JsonSerializer.Deserialize<GuidMethodsModel>(jsonGuidMethods);
             });
 
             return guidMethods;
@@ -73,7 +73,7 @@ namespace Mocker.Services.Concretes
                 string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper());
 
                 string content = await _githubService.GetFileContent(path, guid);
-                mock = JsonConvert.DeserializeObject<MockModel>(content);
+                mock = JsonSerializer.Deserialize<MockModel>(content);
             });
 
             return mock;

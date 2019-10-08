@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Mocker.Extensions;
-using Mocker.Models.Mock;
 using Mocker.Services.Abstracts;
-using System;
 using System.Threading.Tasks;
 
 namespace Mocker.Middlewares
@@ -10,9 +8,9 @@ namespace Mocker.Middlewares
     public class GetMockMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IMockService _mockService;
+        private readonly IGetMockMiddlewareService _mockService;
 
-        public GetMockMiddleware(RequestDelegate next, IMockService mockService)
+        public GetMockMiddleware(RequestDelegate next, IGetMockMiddlewareService mockService)
         {
             _next = next;
             _mockService = mockService;
@@ -20,33 +18,21 @@ namespace Mocker.Middlewares
 
         public async Task Invoke(HttpContext httpContext)
         {
-            string[] paths = httpContext.Request.Path.Value.Split('/');
-            paths = (await paths.PathHasGuidAsync(async () =>
+
+            await httpContext.Request.HaveToRunGetMockAsync(async () =>
             {
-                Guid guid = Guid.Parse(paths[2]);
-                MockModel mock = await _mockService.GetMock(guid, httpContext.Request.Method);
-                mock.IsNotNull(() =>
-                {
-                    httpContext.Request.HasQueryValues((query) =>
-                    {
-                        mock.ResolveDynamicBody(query);
-                    });
+                await _mockService.GetMock(httpContext);
+            });
 
-                    httpContext.Response.AddHeaders(mock.Headers);
-                    httpContext.Response.StatusCode = mock.StatusCode;
-                    httpContext.Response.ContentType = mock.ContentType;
-                    httpContext.Response.WriteAsync(mock.Body);
+            await httpContext.Request.HaveToRunGetRawMockAsync(async () =>
+            {
+                await _mockService.GetRawMock(httpContext);
+            });
 
-                })
-                .IsNull(() =>
-                {
-                    httpContext.Response.StatusCode = 404;
-                });
-            }));
-            paths = (await paths.PathHasNoGuidAsync(async () =>
+            await httpContext.Request.HaveToFollowNextMiddleware(async () =>
             {
                 await _next(httpContext);
-            }));
+            });
         }
     }
 }

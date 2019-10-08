@@ -25,19 +25,14 @@ namespace Mocker.Extensions
             return str;
         }
 
-        public static async Task<string[]> PathHasGuidAsync(this string[] str, Func<Task> callback)
+        public static bool IsHaveToRunGetMock(this string[] str)
         {
-            if (str.Length >= 3 && Guid.TryParse(str[2], out Guid guid))
-                await callback();
-            return str;
+            return str.Length >= 3 && Guid.TryParse(str[2], out _);
         }
 
-        public static async Task<string[]> PathHasNoGuidAsync(this string[] str, Func<Task> callback)
+        public static bool IsHaveToRunGetRawMockAsync(this string[] str)
         {
-            if (str.Length < 3 || (str.Length >= 3 && !Guid.TryParse(str[2], out _)))
-                await callback();
-            return str;
+            return str.Length >= 4 && str[2].ToLower() == "raw" && Guid.TryParse(str[3], out _);
         }
-
     }
 }

@@ -3,8 +3,8 @@ using Mocker.Extensions;
 using Mocker.Models.File;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
@@ -24,7 +24,7 @@ namespace Mocker.Services.Concretes
         {
             Guid guid = Guid.NewGuid();
 
-            await _githubService.CreateFile(_githubSetting.FilePath, guid, JsonConvert.SerializeObject(file));
+            await _githubService.CreateFile(_githubSetting.FilePath, guid, JsonSerializer.Serialize(file));
 
             return guid;
         }
@@ -36,7 +36,7 @@ namespace Mocker.Services.Concretes
 
             jsonFile.IsNotNull(() =>
             {
-                file = JsonConvert.DeserializeObject<FileModel>(jsonFile);
+                file = JsonSerializer.Deserialize<FileModel>(jsonFile);
             });
 
             return file;
