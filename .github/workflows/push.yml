@@ -9,10 +9,7 @@ on:
 jobs:
   build:
     name: job
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-dotnet@v1
@@ -34,7 +31,7 @@ jobs:
     - name: dotnet publish
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '2.2.103' # SDK Version to use.
+        dotnet-version: '3.0.100' # SDK Version to use.
     - name: build release
       run:  dotnet publish -o app
         
