@@ -1,42 +1,26 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Mocker.Attributes;
-using Mocker.ContentTypeState;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Mock;
 using Mocker.Services.Abstracts;
+using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {
-    [Route("api/")]
+    [Route("api")]
     [ApiController]
     public class HomeController : ControllerBase
     {
         private readonly IMockService _mockService;
-        private readonly IContentTypeService _contentTypeService;
 
-        public HomeController(IMockService mockService, IContentTypeService contentTypeService)
+        public HomeController(IMockService mockService)
         {
             _mockService = mockService;
-            _contentTypeService = contentTypeService;
         }
-
-        [HttpAll("{guid}")]
-        public async Task<IActionResult> Index(Guid guid)
+        [HttpGet]
+        public IActionResult Index()
         {
-            MockModel mock = await _mockService.GetMock(guid, Request.Method);
-            IContentTypeMockState state = _contentTypeService.GetState(mock.ContentType);
-
-            Request.HasQueryValues((query) =>
-            {
-                mock.ResolveDynamicBody(query);
-            });
-
-            Response.AddHeaders(mock.Headers);
-
-            return state.CreateObjectResult(mock);
+            return Ok("Mocker Cloud");
         }
 
         [HttpPost("[action]")]

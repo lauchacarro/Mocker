@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Mocker.Enums;
 using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Mock;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
 {
@@ -36,11 +36,11 @@ namespace Mocker.Services.Concretes
                 HttpMethods = request.Select(x => x.HttpMethod.ToUpper()).ToArray()
             };
 
-            await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonConvert.SerializeObject(guidMethodsModel));
+            await _githubService.CreateFile(_guidMethodsFolderPath, guid, JsonSerializer.Serialize(guidMethodsModel));
 
             foreach (MockModel mock in request)
             {
-                string content = JsonConvert.SerializeObject(mock);
+                string content = JsonSerializer.Serialize(mock);
                 string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, mock.HttpMethod.ToUpper());
                 await _githubService.CreateFile(path, guid, content);
             }
@@ -50,22 +50,33 @@ namespace Mocker.Services.Concretes
 
         public async Task<GuidMethodsModel> GetHttpMethodsByGuid(Guid guid)
         {
-            string jsonGuidMethodsModel = await _githubService.GetFileContent(_guidMethodsFolderPath, guid);
+            GuidMethodsModel guidMethods = null;
+            string jsonGuidMethods = await _githubService.GetFileContent(_guidMethodsFolderPath, guid);
 
-            return JsonConvert.DeserializeObject<GuidMethodsModel>(jsonGuidMethodsModel);
+            jsonGuidMethods.IsNotNull(() =>
+            {
+                guidMethods = JsonSerializer.Deserialize<GuidMethodsModel>(jsonGuidMethods);
+            });
+
+            return guidMethods;
         }
 
         public async Task<MockModel> GetMock(Guid guid, string httpMethod)
         {
-            GuidMethodsModel guidMethodsModel = await GetHttpMethodsByGuid(guid);
+            MockModel mock = null;
+            GuidMethodsModel guidMethods = await GetHttpMethodsByGuid(guid);
 
-            httpMethod = guidMethodsModel.HttpMethods.Contains(httpMethod) ? httpMethod : "GET";
+            await guidMethods.IsNotNullAsync(async () =>
+            {
+                httpMethod = guidMethods.HttpMethods.Contains(httpMethod) ? httpMethod : "GET";
 
-            string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper());
+                string path = Path.Combine(_githubSetting.HttpMethodsFolderPath, httpMethod.ToUpper());
 
-            string content = await _githubService.GetFileContent(path, guid);
+                string content = await _githubService.GetFileContent(path, guid);
+                mock = JsonSerializer.Deserialize<MockModel>(content);
+            });
 
-            return JsonConvert.DeserializeObject<MockModel>(content);
+            return mock;
         }
 
         public ValidateResult Validate(IEnumerable<MockModel> request)

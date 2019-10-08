@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Mocker.Enums;
+using Mocker.Models.Mock;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Mocker.Enums;
-using Mocker.Models.Mock;
 
 namespace Mocker.Extensions
 {
@@ -53,14 +52,8 @@ namespace Mocker.Extensions
 
         public static MockModel IsHttpMethodInvalid(this MockModel mock, Action callback)
         {
-            IEnumerable<HttpMethod> httpMethodNames = new List<HttpMethod>();
-
-            httpMethodNames.AddEnums()
-            .NoContains(mock.HttpMethod, () =>
-            {
+            if (string.IsNullOrWhiteSpace(mock.HttpMethod))
                 callback();
-            });
-
             return mock;
         }
     }

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Mocker.Models.File;
+using System;
 using System.Threading.Tasks;
-using Mocker.Models.File;
 
 namespace Mocker.Services.Abstracts
 {

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Mocker.Extensions;
 using Mocker.Models.File;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
-using Newtonsoft.Json;
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
 {
@@ -23,16 +24,22 @@ namespace Mocker.Services.Concretes
         {
             Guid guid = Guid.NewGuid();
 
-            await _githubService.CreateFile(_githubSetting.FilePath, guid, JsonConvert.SerializeObject(file));
+            await _githubService.CreateFile(_githubSetting.FilePath, guid, JsonSerializer.Serialize(file));
 
             return guid;
         }
 
         public async Task<FileModel> GetFile(Guid guid)
         {
-            string jsonFileModel = await _githubService.GetFileContent(_githubSetting.FilePath, guid);
+            FileModel file = null;
+            string jsonFile = await _githubService.GetFileContent(_githubSetting.FilePath, guid);
 
-            return JsonConvert.DeserializeObject<FileModel>(jsonFileModel);
+            jsonFile.IsNotNull(() =>
+            {
+                file = JsonSerializer.Deserialize<FileModel>(jsonFile);
+            });
+
+            return file;
         }
     }
 }
