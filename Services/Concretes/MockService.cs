@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Mocker.Enums;
 using Mocker.Extensions;
 using Mocker.Models;
@@ -11,6 +6,11 @@ using Mocker.Models.Mock;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
 {

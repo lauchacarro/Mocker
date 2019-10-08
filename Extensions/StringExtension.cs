@@ -24,5 +24,20 @@ namespace Mocker.Extensions
                 callback();
             return str;
         }
+
+        public static async Task<string[]> PathHasGuidAsync(this string[] str, Func<Task> callback)
+        {
+            if (str.Length >= 3 && Guid.TryParse(str[2], out Guid guid))
+                await callback();
+            return str;
+        }
+
+        public static async Task<string[]> PathHasNoGuidAsync(this string[] str, Func<Task> callback)
+        {
+            if (str.Length < 3 || (str.Length >= 3 && !Guid.TryParse(str[2], out _)))
+                await callback();
+            return str;
+        }
+
     }
 }

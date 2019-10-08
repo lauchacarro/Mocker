@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using Mocker.ContentTypeState;
+﻿using Mocker.ContentTypeState;
 using Mocker.Enums;
 using Mocker.Extensions;
 using Mocker.Services.Abstracts;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Mocker.Services.Concretes
 {

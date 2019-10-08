@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Mocker.Extensions;
 using Mocker.Models.File;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
 {

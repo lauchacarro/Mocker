@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.File;
 using Mocker.Services.Abstracts;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {
