@@ -1,11 +1,11 @@
-name: CI
+name: CI Master
 on: 
   push:
     branches:
     - master      # Eventos de Push sobre el branch 'master'
 jobs:
   build:
-    name: job
+    name: Build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
