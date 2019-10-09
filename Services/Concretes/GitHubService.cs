@@ -18,13 +18,9 @@ namespace Mocker.Services.Concretes
         {
             _githubSetting = githubSetting.Value;
             _client = new GitHubClient(new ProductHeaderValue(nameof(Mocker)));
-#if DEBUG
-            Credentials basicAuth = new Credentials(_githubSetting.User, _githubSetting.Pass);
+            Credentials basicAuth = new Credentials(_githubSetting.User, Environment.GetEnvironmentVariable("GITHUB_PASSWORD") ?? _githubSetting.Pass);
 
-#else
-            Credentials basicAuth = new Credentials(_githubSetting.User, Environment.GetEnvironmentVariable("GITHUB_PASSWORD"));
 
-#endif
             _client.Credentials = basicAuth;
             _githubSetting = githubSetting.Value;
         }

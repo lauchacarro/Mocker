@@ -3,6 +3,7 @@ using Mocker.Models.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Mocker.Extensions
             {
                 foreach (MockHeader header in headers)
                 {
-                    response.Headers.Add(header.Key, header.Value);
+                    response.Headers.Add(WebUtility.UrlEncode(header.Key), WebUtility.UrlEncode(header.Value));
                 }
             }
         }
