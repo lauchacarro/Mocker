@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Mocker.Models.Mock
+﻿namespace Mocker.Models.Mock
 {
     public class MockModel
     {
