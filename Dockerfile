@@ -6,16 +6,16 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY ["Mocker.csproj", ""]
-RUN dotnet restore "./Mocker.csproj"
+RUN dotnet restore "Mocker.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "Mocker.csproj" -c Release -o /app/build
+WORKDIR "/src/"
+RUN dotnet build "Mocker.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "Mocker.csproj" -c Release -o /app/publish
+RUN dotnet publish "Mocker.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 CMD ASPNETCORE_URLS=http://*:$PORT dotnet Mocker.dll
