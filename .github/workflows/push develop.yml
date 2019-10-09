@@ -1,0 +1,16 @@
+name: CI
+on: 
+  push:
+    branches:
+    - develop      # Eventos de Push sobre el branch 'master'
+
+jobs:
+  build:
+    name: job
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100' # Versión del SDK.
+    - run: dotnet build --configuration Release
