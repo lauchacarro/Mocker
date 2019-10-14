@@ -14,10 +14,16 @@ namespace Mocker.Extensions
         {
             if (headers != null && headers.Any())
             {
+                string allowHeaders = string.Empty;
                 foreach (MockHeader header in headers)
                 {
                     response.Headers.Add(WebUtility.UrlEncode(header.Key), WebUtility.UrlEncode(header.Value));
+                    allowHeaders += header.Key.ToLower();
+                    if (headers.Last() != header)
+                        allowHeaders += ", ";
                 }
+                response.Headers.Add("Access-Control-Expose-Headers", allowHeaders);
+
             }
         }
 
