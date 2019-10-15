@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Mocker.Models.Mock;
 using System;
 using System.Linq;
@@ -14,10 +15,16 @@ namespace Mocker.Extensions
         {
             if (headers != null && headers.Any())
             {
+                string allowHeaders = string.Empty;
                 foreach (MockHeader header in headers)
                 {
                     response.Headers.Add(WebUtility.UrlEncode(header.Key), WebUtility.UrlEncode(header.Value));
+                    allowHeaders += header.Key.ToLower();
+                    if (headers.Last() != header)
+                        allowHeaders += ", ";
                 }
+                response.Headers.Add("Access-Control-Expose-Headers", allowHeaders);
+
             }
         }
 
@@ -79,6 +86,13 @@ namespace Mocker.Extensions
 
             await response.WriteAsync(body);
             return response;
+        }
+
+        public static HttpRequest GetDelayMs(this HttpRequest request, Action<int> callback)
+        {
+            if (request.Query.TryGetValue("delayms", out StringValues delaymsStr) && int.TryParse(delaymsStr, out int delayms))
+                callback(delayms);
+            return request;
         }
     }
 }

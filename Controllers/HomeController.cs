@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mocker.Controllers
 {
-    [Route("api")]
+    [Route("/")]
     [ApiController]
     public class HomeController : ControllerBase
     {
@@ -18,12 +18,13 @@ namespace Mocker.Controllers
             _mockService = mockService;
         }
         [HttpGet]
+        [HttpGet("api")]
         public IActionResult Index()
         {
-            return Ok("Mocker Cloud");
+            return Redirect("https://mocker.cloud");
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("api/[action]")]
         public async Task<IActionResult> Create(MockModelEnumerable request)
         {
             ObjectResult statusCodeResult = new ObjectResult(null);
