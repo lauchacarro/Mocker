@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Mocker.Models.Mock;
 using System;
 using System.Linq;
@@ -85,6 +86,13 @@ namespace Mocker.Extensions
 
             await response.WriteAsync(body);
             return response;
+        }
+
+        public static HttpRequest GetDelayMs(this HttpRequest request, Action<int> callback)
+        {
+            if (request.Query.TryGetValue("delayms", out StringValues delaymsStr) && int.TryParse(delaymsStr, out int delayms))
+                callback(delayms);
+            return request;
         }
     }
 }
