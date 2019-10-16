@@ -13,7 +13,19 @@ namespace Mocker.Controllers
     {
 
         [HttpPost("[action]")]
-        public IActionResult FormData([FromForm]TestRequest request)
+        public IActionResult Form([FromForm]TestRequest request)
+        {
+            return Ok(request);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Raw(TestRequest request)
+        {
+            return Ok(request);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult RawText([FromBody]string request)
         {
             return Ok(request);
         }

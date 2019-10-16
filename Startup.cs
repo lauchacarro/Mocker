@@ -21,13 +21,14 @@ namespace Mocker
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddXmlSerializerFormatters();
             services.AddOptions();
             services.Configure<GitHubSetting>(Configuration.GetSection(nameof(GitHubSetting)));
             services.AddSingleton<IGitHubService, GitHubService>();
             services.AddTransient<IMockService, MockService>();
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IGetMockMiddlewareService, GetMockMiddlewareService>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
