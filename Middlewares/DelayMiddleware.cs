@@ -16,7 +16,7 @@ namespace Mocker.Middlewares
         {
             await _next(httpContext);
 
-            int delay = 0;
+            int delay = default;
             httpContext.Request.GetDelayMs(delayms =>
             {
                 delay = delayms;
