@@ -38,7 +38,7 @@ namespace Mocker.Extensions
         public static async Task<HttpRequest> HasFiles(this HttpRequest request, Func<IFormFile, Task> callback)
         {
             if (request.Form.Files.Count > 0)
-                await callback(request.Form.Files[0]);
+                await callback(request.Form.Files.First());
 
             return request;
         }
