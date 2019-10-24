@@ -5,6 +5,7 @@ using Octokit;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
@@ -42,7 +43,7 @@ namespace Mocker.Services.Concretes
             try
             {
                 IReadOnlyList<RepositoryContent> contents = await _client.Repository.Content.GetAllContents(_githubSetting.RepositoryID, Path.Combine(path, guid.ToString()));
-                return contents[0].Content;
+                return contents.First().Content;
             }
             catch (Octokit.NotFoundException)
             {
