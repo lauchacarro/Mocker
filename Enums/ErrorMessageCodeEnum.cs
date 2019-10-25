@@ -9,6 +9,7 @@
         invalidMethod,
         ExceptionInCreateFile,
         HttpMethodDuplicate,
+        InvalidUrl
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using Mocker.Models;
 using Mocker.Models.Mock;
 using System;
 using System.Linq;
@@ -11,20 +12,18 @@ namespace Mocker.Extensions
 {
     public static class HttpExtension
     {
-        public static void AddHeaders(this HttpResponse response, params MockHeader[] headers)
+        public static void AddHeaders(this HttpResponse response, params KeyValue[] headers)
         {
             if (headers != null && headers.Any())
             {
                 string allowHeaders = string.Empty;
-                foreach (MockHeader header in headers)
+                foreach (KeyValue header in headers)
                 {
                     response.Headers.Add(WebUtility.UrlEncode(header.Key), WebUtility.UrlEncode(header.Value));
                     allowHeaders += header.Key.ToLower();
                     if (headers.Last() != header)
                         allowHeaders += ", ";
                 }
-                response.Headers.Add("Access-Control-Expose-Headers", allowHeaders);
-
             }
         }
 

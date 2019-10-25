@@ -27,7 +27,9 @@ namespace Mocker
             services.AddSingleton<IGitHubService, GitHubService>();
             services.AddTransient<IMockService, MockService>();
             services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IPostmanService, PostmanService>();
             services.AddTransient<IGetMockMiddlewareService, GetMockMiddlewareService>();
+            services.AddHttpClient();
 
         }
 
