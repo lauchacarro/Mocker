@@ -12,5 +12,6 @@ namespace Mocker.Models.Postman
         public string StatusCodeText { get; set; }
         public string Body { get; set; }
         public IEnumerable<KeyValue> Headers { get; set; }
+        public long TimeRequest { get; set; }
     }
 }

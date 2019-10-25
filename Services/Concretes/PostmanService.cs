@@ -3,8 +3,8 @@ using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Postman;
 using Mocker.Services.Abstracts;
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -23,18 +23,24 @@ namespace Mocker.Services.Concretes
         public async Task<PostmanResponse> SendRequest(PostmanRequest request)
         {
             HttpMethod httpMethod = new HttpMethod(request.HttpMethod);
-            var httpRquest = new HttpRequestMessage(httpMethod, request.Url);
-
+            HttpRequestMessage httpRquest = new HttpRequestMessage(httpMethod, request.Url);
             HttpClient client = _clientFactory.CreateClient(nameof(PostmanService));
 
-            var httpResponse = await client.SendAsync(httpRquest);
+            Stopwatch stopWatch = Stopwatch.StartNew();
+            HttpResponseMessage httpResponse = await client.SendAsync(httpRquest);
+            stopWatch.Stop();
 
-            PostmanResponse response = new PostmanResponse();
-            response.StatusCode = (int)httpResponse.StatusCode;
-            response.StatusCodeText = httpResponse.StatusCode.ToString();
-            response.Body = await httpResponse.Content.ReadAsStringAsync();
-            response.ContentType = httpResponse.Content.Headers.ContentType.MediaType;
+            PostmanResponse response = new PostmanResponse
+            {
+                StatusCode = (int)httpResponse.StatusCode,
+                StatusCodeText = httpResponse.StatusCode.ToString(),
+                Body = await httpResponse.Content.ReadAsStringAsync(),
+                ContentType = httpResponse.Content.Headers.ContentType.MediaType,
+                TimeRequest = stopWatch.ElapsedMilliseconds
+            };
+
             List<KeyValue> headerList = new List<KeyValue>();
+
             foreach (KeyValuePair<string, IEnumerable<string>> header in httpResponse.Content.Headers)
             {
                 if(header.Value.Count() > 1)
