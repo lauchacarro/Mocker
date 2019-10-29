@@ -29,6 +29,7 @@ namespace Mocker
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IPostmanService, PostmanService>();
             services.AddTransient<IGetMockMiddlewareService, GetMockMiddlewareService>();
+            services.AddTransient<IReverseProxyService, ReverseProxyService>();
             services.AddHttpClient();
 
         }
