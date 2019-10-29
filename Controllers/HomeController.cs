@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Mocker.Extensions;
+using Mocker.Extensions.Validations;
 using Mocker.Models;
 using Mocker.Models.Mock;
-using Mocker.Models.Postman;
 using Mocker.Services.Abstracts;
 using System.Threading.Tasks;
 

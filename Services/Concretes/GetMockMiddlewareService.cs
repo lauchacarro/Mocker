@@ -29,15 +29,12 @@ namespace Mocker.Services.Concretes
                 });
 
                 await context.Response.WriteMock(mock);
-
-
             }))
             .IsNull(() =>
             {
                 context.Response.StatusCode = 404;
             });
         }
-
         public async Task GetRawMock(HttpContext context)
         {
             string[] paths = context.Request.Path.Value.Split('/');

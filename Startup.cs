@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Mocker.Extensions;
+using Mocker.Extensions.Middlewares;
 using Mocker.Models.Settings;
 using Mocker.Services.Abstracts;
 using Mocker.Services.Concretes;

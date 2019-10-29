@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Mocker.Extensions
+namespace Mocker.Extensions.Validations
 {
     public static class ValidateResultExtension
     {

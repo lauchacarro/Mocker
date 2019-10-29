@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
+using Mocker.Extensions.Validations;
 using Mocker.Services.Abstracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mocker.Services.Concretes
@@ -23,7 +22,6 @@ namespace Mocker.Services.Concretes
             using var responseMessage = await _httpClient.SendAsync(targetRequestMessage, HttpCompletionOption.ResponseHeadersRead, context.RequestAborted);
 
             await ProcessResponseContent(context, responseMessage);
-
         }
 
         private async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage)
@@ -45,7 +43,6 @@ namespace Mocker.Services.Concretes
             var content = await responseMessage.Content.ReadAsByteArrayAsync();
 
             await context.Response.Body.WriteAsync(content);
-
         }
 
         private HttpRequestMessage CreateTargetMessage(HttpContext context, Uri targetUri)
@@ -65,7 +62,7 @@ namespace Mocker.Services.Concretes
             {
                 requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
             }
-            
+
             requestMessage.Headers.Host = targetUri.Host + ":" + targetUri.Port;
 
             return requestMessage;
@@ -73,19 +70,10 @@ namespace Mocker.Services.Concretes
 
         private Uri BuildTargetUri(HttpRequest request)
         {
-            if (request.Headers.TryGetValue("Mocker-Url", out StringValues values))
-            {
-                foreach (string item in values)
-                {
-                    if (Uri.TryCreate(item, UriKind.RelativeOrAbsolute, out Uri result))
-                    {
-                        return result;
-                    }
-                }
-            }
+            Uri targetUri = null;
+            request.GetUrlFromHeader(uri => targetUri = uri);
 
-            return null;
+            return targetUri;
         }
-
     }
 }

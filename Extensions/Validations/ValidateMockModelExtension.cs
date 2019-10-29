@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Mocker.Extensions
+namespace Mocker.Extensions.Validations
 {
     public static class ValidateMockModelExtension
     {
@@ -15,7 +15,6 @@ namespace Mocker.Extensions
 
             return mocks;
         }
-
         public static MockModel IsStatusCodeSmallerThanOne(this MockModel mock, Action callback)
         {
             if (mock.StatusCode <= 0)
@@ -23,7 +22,6 @@ namespace Mocker.Extensions
 
             return mock;
         }
-
         public static MockModel IsContentTypeInvalid(this MockModel mock, Action callback)
         {
             IEnumerable<ContentTypeEnum> contentTypeNames = new List<ContentTypeEnum>();
@@ -36,7 +34,6 @@ namespace Mocker.Extensions
 
             return mock;
         }
-
         public static MockModel IsCharsetInvalid(this MockModel mock, Action callback)
         {
             IEnumerable<CharsetEnum> charsetNames = new List<CharsetEnum>();
@@ -49,7 +46,6 @@ namespace Mocker.Extensions
 
             return mock;
         }
-
         public static MockModel IsHttpMethodInvalid(this MockModel mock, Action callback)
         {
             if (string.IsNullOrWhiteSpace(mock.HttpMethod))

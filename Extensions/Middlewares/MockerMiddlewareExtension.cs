@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Mocker.Middlewares;
 
-namespace Mocker.Extensions
+namespace Mocker.Extensions.Middlewares
 {
     public static class MockerMiddlewareExtension
     {

@@ -10,31 +10,14 @@ namespace Mocker.Extensions
         {
             return original.Replace("/", "").Replace("-", "").Replace("+", "").Replace(" ", "").ToLower();
         }
-
         public static IEnumerable<string> NormalizeEnumerableData<T>(this IEnumerable<T> enumerable) where T : Enum
         {
             return enumerable.Select(x => x.ToString().NormalizeData());
         }
-
         public static IEnumerable<T> AddEnums<T>(this IEnumerable<T> enumerable) where T : Enum
         {
             return enumerable.Concat(Enum.GetValues(typeof(T)).Cast<T>());
         }
-
-        public static IEnumerable<T> Contains<T>(this IEnumerable<T> enumerable, string original, Action<T> callback) where T : Enum
-        {
-            original = original.NormalizeData();
-
-            if (enumerable.ContainsBase(original))
-            {
-                var enumerableNormalized = enumerable.NormalizeEnumerableData();
-                var index = enumerableNormalized.ToList().IndexOf(original);
-                callback(enumerable.ToArray()[index]);
-            }
-
-            return enumerable;
-        }
-
         public static IEnumerable<T> NoContains<T>(this IEnumerable<T> enumerable, string original, Action callback) where T : Enum
         {
             original = original.NormalizeData();
@@ -46,8 +29,6 @@ namespace Mocker.Extensions
 
             return enumerable;
         }
-
-
         private static bool ContainsBase<T>(this IEnumerable<T> enumerable, string original) where T : Enum
         {
             original = original.NormalizeData();

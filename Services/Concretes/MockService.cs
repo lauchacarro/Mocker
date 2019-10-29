@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Mocker.Enums;
 using Mocker.Extensions;
+using Mocker.Extensions.Validations;
 using Mocker.Models;
 using Mocker.Models.Mock;
 using Mocker.Models.Settings;
@@ -84,12 +85,10 @@ namespace Mocker.Services.Concretes
             ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
 
-
             request.ValidateDuplicateMethod(() =>
             {
                 errorMessages.Add(ErrorMessageCodeEnum.HttpMethodDuplicate);
             });
-
 
             foreach (MockModel mock in request)
             {
@@ -110,7 +109,6 @@ namespace Mocker.Services.Concretes
                     errorMessages.Add(ErrorMessageCodeEnum.invalidMethod);
                 });
             }
-
 
             return new ValidateResult()
             {
