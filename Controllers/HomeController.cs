@@ -13,12 +13,10 @@ namespace Mocker.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IMockService _mockService;
-        private readonly IPostmanService _postmanService;
 
-        public HomeController(IMockService mockService, IPostmanService postmanService)
+        public HomeController(IMockService mockService)
         {
             _mockService = mockService;
-            _postmanService = postmanService;
         }
 
         [HttpGet]
@@ -51,24 +49,5 @@ namespace Mocker.Controllers
             return statusCodeResult;
         }
 
-        [HttpPost("api/[action]")]
-        public async Task<IActionResult> Postman(PostmanRequest request)
-        {
-            ObjectResult statusCodeResult = new ObjectResult(null);
-
-            ValidateResult validateResult = _postmanService.Validate(request);
-
-            (await validateResult.Success(async () =>
-            {
-                PostmanResponse response = await _postmanService.SendRequest(request);
-                statusCodeResult = Ok(response);
-            }))
-            .Error((errorMessages) =>
-            {
-                statusCodeResult = BadRequest(errorMessages);
-            });
-
-            return statusCodeResult;
-        }
     }
 }
