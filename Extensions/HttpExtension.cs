@@ -61,7 +61,7 @@ namespace Mocker.Extensions
         public static async Task<HttpRequest> HaveToFollowNextMiddleware(this HttpRequest request, Func<Task> callback)
         {
             string[] paths = request.Path.Value.Split('/');
-            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync() && !paths.IsHaveToRunReverseProxy())
+            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync() && (!paths.IsHaveToRunReverseProxy() || (paths.IsHaveToRunReverseProxy() && !request.Headers.ContainsKey("Mocker-Url"))))
                 await callback();
             return request;
         }
@@ -69,7 +69,7 @@ namespace Mocker.Extensions
         public static async Task<HttpRequest> HaveToRunReverseProxy(this HttpRequest request, Func<Task> callback)
         {
             string[] paths = request.Path.Value.Split('/');
-            if (paths.IsHaveToRunReverseProxy())
+            if (paths.IsHaveToRunReverseProxy() && request.Headers.TryGetValue("Mocker-Url", out StringValues values) && Uri.TryCreate(values, UriKind.RelativeOrAbsolute, out Uri uri) && uri.Scheme.Contains("http"))
                 await callback();
             return request;
         }
