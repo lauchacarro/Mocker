@@ -61,7 +61,15 @@ namespace Mocker.Extensions
         public static async Task<HttpRequest> HaveToFollowNextMiddleware(this HttpRequest request, Func<Task> callback)
         {
             string[] paths = request.Path.Value.Split('/');
-            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync())
+            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync() && !paths.IsHaveToRunReverseProxy())
+                await callback();
+            return request;
+        }
+
+        public static async Task<HttpRequest> HaveToRunReverseProxy(this HttpRequest request, Func<Task> callback)
+        {
+            string[] paths = request.Path.Value.Split('/');
+            if (paths.IsHaveToRunReverseProxy())
                 await callback();
             return request;
         }

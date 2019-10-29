@@ -9,11 +9,13 @@ namespace Mocker.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IGetMockMiddlewareService _mockService;
+        private readonly IReverseProxyService _reverseProxyService;
 
-        public MockerMiddleware(RequestDelegate next, IGetMockMiddlewareService mockService)
+        public MockerMiddleware(RequestDelegate next, IGetMockMiddlewareService mockService, IReverseProxyService reverseProxyService)
         {
             _next = next;
             _mockService = mockService;
+            _reverseProxyService = reverseProxyService;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -27,6 +29,11 @@ namespace Mocker.Middlewares
             await httpContext.Request.HaveToRunGetRawMockAsync(async () =>
             {
                 await _mockService.GetRawMock(httpContext);
+            });
+
+            await httpContext.Request.HaveToRunReverseProxy(async () =>
+            {
+                await _reverseProxyService.Process(httpContext);
             });
 
             await httpContext.Request.HaveToFollowNextMiddleware(async () =>
