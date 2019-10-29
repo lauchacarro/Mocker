@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Mocker.Middlewares
 {
-    public class GetMockMiddleware
+    public class MockerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly IGetMockMiddlewareService _mockService;
 
-        public GetMockMiddleware(RequestDelegate next, IGetMockMiddlewareService mockService)
+        public MockerMiddleware(RequestDelegate next, IGetMockMiddlewareService mockService)
         {
             _next = next;
             _mockService = mockService;

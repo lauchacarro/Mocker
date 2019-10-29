@@ -47,7 +47,7 @@ namespace Mocker
             app.UseRouting();
 
             app.UseDelay();
-            app.UseGetMock();
+            app.UseMocker();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
