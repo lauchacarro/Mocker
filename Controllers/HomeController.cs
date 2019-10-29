@@ -2,6 +2,7 @@
 using Mocker.Extensions;
 using Mocker.Models;
 using Mocker.Models.Mock;
+using Mocker.Models.Postman;
 using Mocker.Services.Abstracts;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Mocker.Controllers
         {
             _mockService = mockService;
         }
+
         [HttpGet]
         [HttpGet("api")]
         public IActionResult Index()
@@ -45,8 +47,7 @@ namespace Mocker.Controllers
             });
 
             return statusCodeResult;
-
-
         }
+
     }
 }

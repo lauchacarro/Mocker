@@ -34,5 +34,10 @@ namespace Mocker.Extensions
         {
             return str.Length >= 4 && str[2].ToLower() == "raw" && Guid.TryParse(str[3], out _);
         }
+
+        public static bool IsHaveToRunReverseProxy(this string[] str)
+        {
+            return str.Length >= 3 && str[2].ToLower() == "postman";
+        }
     }
 }

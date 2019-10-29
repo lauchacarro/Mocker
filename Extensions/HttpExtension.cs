@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using Mocker.Models;
 using Mocker.Models.Mock;
 using System;
 using System.Linq;
@@ -11,20 +12,18 @@ namespace Mocker.Extensions
 {
     public static class HttpExtension
     {
-        public static void AddHeaders(this HttpResponse response, params MockHeader[] headers)
+        public static void AddHeaders(this HttpResponse response, params KeyValue[] headers)
         {
             if (headers != null && headers.Any())
             {
                 string allowHeaders = string.Empty;
-                foreach (MockHeader header in headers)
+                foreach (KeyValue header in headers)
                 {
                     response.Headers.Add(WebUtility.UrlEncode(header.Key), WebUtility.UrlEncode(header.Value));
                     allowHeaders += header.Key.ToLower();
                     if (headers.Last() != header)
                         allowHeaders += ", ";
                 }
-                response.Headers.Add("Access-Control-Expose-Headers", allowHeaders);
-
             }
         }
 
@@ -62,7 +61,15 @@ namespace Mocker.Extensions
         public static async Task<HttpRequest> HaveToFollowNextMiddleware(this HttpRequest request, Func<Task> callback)
         {
             string[] paths = request.Path.Value.Split('/');
-            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync())
+            if (!paths.IsHaveToRunGetMock() && !paths.IsHaveToRunGetRawMockAsync() && (!paths.IsHaveToRunReverseProxy() || (paths.IsHaveToRunReverseProxy() && !request.Headers.ContainsKey("Mocker-Url"))))
+                await callback();
+            return request;
+        }
+
+        public static async Task<HttpRequest> HaveToRunReverseProxy(this HttpRequest request, Func<Task> callback)
+        {
+            string[] paths = request.Path.Value.Split('/');
+            if (paths.IsHaveToRunReverseProxy() && request.Headers.TryGetValue("Mocker-Url", out StringValues values) && Uri.TryCreate(values, UriKind.RelativeOrAbsolute, out Uri uri) && uri.Scheme.Contains("http"))
                 await callback();
             return request;
         }

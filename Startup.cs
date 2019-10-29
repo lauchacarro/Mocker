@@ -28,6 +28,8 @@ namespace Mocker
             services.AddTransient<IMockService, MockService>();
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IGetMockMiddlewareService, GetMockMiddlewareService>();
+            services.AddTransient<IReverseProxyService, ReverseProxyService>();
+            services.AddHttpClient();
 
         }
 
@@ -45,7 +47,7 @@ namespace Mocker
             app.UseRouting();
 
             app.UseDelay();
-            app.UseGetMock();
+            app.UseMocker();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
