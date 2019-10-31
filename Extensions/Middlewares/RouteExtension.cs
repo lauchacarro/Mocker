@@ -11,7 +11,7 @@ namespace Mocker.Extensions.Middlewares
         {
             string[] paths = request.Path.Value.Split('/');
 
-            if (paths.Length >= 4 && paths[2].ToLower() == "raw" && Guid.TryParse(paths[3], out _))
+            if (paths.Length >= 4 && paths[1].ToLower() == "api" && paths[2].ToLower() == "raw" && Guid.TryParse(paths[3], out _))
                 await callback();
             return request;
         }
@@ -19,14 +19,14 @@ namespace Mocker.Extensions.Middlewares
         {
             string[] paths = request.Path.Value.Split('/');
 
-            if (paths.Length >= 3 && Guid.TryParse(paths[2], out _))
+            if (paths.Length >= 3 && paths[1].ToLower() == "api" && Guid.TryParse(paths[2], out _))
                 await callback();
             return request;
         }
         public static async Task<HttpRequest> RouteReverseProxyAsync(this HttpRequest request, Func<Task> callback)
         {
             string[] paths = request.Path.Value.Split('/');
-            if (paths.Length >= 3 && paths[2].ToLower() == "postman" && request.HasUrlValid())
+            if (paths.Length >= 3 && paths[1].ToLower() == "api" && paths[2].ToLower() == "postman" && request.HasUrlValid())
                 await callback();
             return request;
         }
