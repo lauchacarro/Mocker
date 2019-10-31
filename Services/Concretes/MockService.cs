@@ -82,7 +82,6 @@ namespace Mocker.Services.Concretes
 
         public ValidateResult Validate(IEnumerable<MockModel> request)
         {
-            ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
 
             request.ValidateDuplicateMethod(() =>
