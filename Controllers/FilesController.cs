@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Mocker.Extensions;
+using Mocker.Extensions.Validations;
 using Mocker.Models;
 using Mocker.Models.File;
 using Mocker.Services.Abstracts;
@@ -23,10 +24,17 @@ namespace Mocker.Controllers
         [HttpGet("{guid}")]
         public async Task<IActionResult> Index(Guid guid)
         {
+            IActionResult statusCodeResult = NotFound();
             FileModel file = await _fileService.GetFile(guid);
-            byte[] bytes = Convert.FromBase64String(file.Base64);
 
-            return File(bytes, file.ContentType, file.Name);
+            file.IsNotNull(() =>
+            {
+                byte[] bytes = Convert.FromBase64String(file.Base64);
+
+                statusCodeResult = File(bytes, file.ContentType, file.Name);
+            });
+
+            return statusCodeResult;
         }
 
         [HttpPost]
@@ -36,24 +44,23 @@ namespace Mocker.Controllers
 
             await Request.HasFiles(async (file) =>
             {
-                var filePath = Path.GetTempFileName();
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(stream);
+                FileModel fileModel = await file.ToFileModelAsync();
 
-                byte[] bytes = stream.ConvertToBlob();
+                ValidateResult validateResult = _fileService.Validate(fileModel);
 
-                FileModel fileModel = new FileModel
+                (await validateResult.Success(async () =>
                 {
-                    Name = file.FileName,
-                    Base64 = stream.ToBase64String(),
-                    ContentType = file.ContentType
-                };
-
-                GuidResponse guidResponse = new GuidResponse()
+                    GuidResponse guidResponse = new GuidResponse()
+                    {
+                        Guid = await _fileService.Create(fileModel)
+                    };
+                    statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
+                }))
+                .Error((errorMessages) =>
                 {
-                    Guid = await _fileService.Create(fileModel)
-                };
-                statusCodeResult = Created("/api/" + guidResponse.Guid, guidResponse);
+                    statusCodeResult = BadRequest(errorMessages);
+                });
+
             });
 
             return statusCodeResult;

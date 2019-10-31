@@ -9,7 +9,8 @@
         invalidMethod,
         ExceptionInCreateFile,
         HttpMethodDuplicate,
-        InvalidUrl
+        InvalidUrl,
+        FileGreaterThan100MB
 
     }
 }
