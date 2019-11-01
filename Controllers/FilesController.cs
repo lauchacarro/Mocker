@@ -38,6 +38,7 @@ namespace Mocker.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Create()
         {
             IActionResult statusCodeResult = BadRequest();
