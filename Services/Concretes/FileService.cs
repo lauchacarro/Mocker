@@ -60,13 +60,7 @@ namespace Mocker.Services.Concretes
 
         public ValidateResult Validate(FileModel request)
         {
-            ValidateResult validateResult = new ValidateResult();
             List<ErrorMessageCodeEnum> errorMessages = new List<ErrorMessageCodeEnum>();
-
-            request.Lenght.IsGreaterThan100MB(() =>
-            {
-                errorMessages.Add(ErrorMessageCodeEnum.FileGreaterThan100MB);
-            });
 
             return new ValidateResult()
             {
